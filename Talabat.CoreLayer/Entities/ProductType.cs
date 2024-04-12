@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Talabat.CoreLayer.Entities
 {
-    internal class ProductType : BaseModel
+    public class ProductType : BaseModel
     {
         public string Name { get; set; } = null!;
 

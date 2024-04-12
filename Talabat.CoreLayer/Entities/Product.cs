@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Talabat.CoreLayer.Entities
 {
     //must named properties same as structure to can consume with angular or front
-    internal class Product : BaseModel
+    public class Product : BaseModel
     {
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

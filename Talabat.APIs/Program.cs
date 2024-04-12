@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Talabat.RepositoryLayer.Data;
+
 namespace Talabat.APIs
 {
     public class Program
@@ -15,6 +18,9 @@ namespace Talabat.APIs
 
             builder.Services.AddEndpointsApiExplorer(); // to configure document of open api (swagger)
             builder.Services.AddSwaggerGen();  // to configure document of open api (swagger)
+
+            builder.Services.AddDbContext<StoreContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+            // add dependency injection for dbcontext class and life time scoped
             #endregion
 
             var app = builder.Build();
