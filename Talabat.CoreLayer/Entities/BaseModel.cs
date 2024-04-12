@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Talabat.CoreLayer.Entities
 {
     //Have Common Code between Entities
-    internal class BaseModel
+    public class BaseModel
     {
         public int Id { get; set; }
     }
