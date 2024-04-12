@@ -24,7 +24,7 @@ namespace Talabat.RepositoryLayer
         {
             if (typeof(T) == typeof(Product))
             { 
-            return (IEnumerable<T>)await dbcontext.Products.Include(p => p.ProductBrand).Include(p=>p.ProductType).ToListAsync();
+             return (IEnumerable<T>) await dbcontext.Products.Include(p => p.ProductBrand).Include(p=>p.ProductType).ToListAsync();
             }
 
             return await dbcontext.Set<T>().ToListAsync();   
