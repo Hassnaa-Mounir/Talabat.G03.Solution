@@ -15,7 +15,20 @@ namespace Talabat.APIs.Controllers
         }
 
         //Get All Products
+        [HttpGet]
+        //BaseURL/api/controller ----- determine verb method
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
+        {                                                                    // to helped frontend that consume data that must display
+            var products=await genericRepository.GetAllAsync();
 
+            ///OkObjectResult okObject =new OkObjectResult(products);
+            ///return okObject;
+
+            //using helper method
+            return Ok(products);
+        
+        }
+        
 
         //Get Product By Id
     
