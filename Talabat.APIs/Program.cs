@@ -43,6 +43,13 @@ namespace Talabat.APIs
                 // you will have object from dbcontextClass by CLR Explicitly
                 await dbcontext.Database.MigrateAsync();
                 //update DataBase
+
+                #region DataSeeding
+
+               await StoreContextDataSeed.SeedAsync(dbcontext);
+
+                #endregion
+
             }
             catch (Exception ex)
             {
@@ -51,6 +58,8 @@ namespace Talabat.APIs
             }
             #endregion
 
+
+           
             // Configure the HTTP request pipeline.
 
             #region  Configure Middlewares - (Container will configure pipeline)
