@@ -30,8 +30,16 @@ namespace Talabat.APIs.Controllers
 
         }
 
+        //Get Product By Id
 
-      
+        [HttpGet("{id}")] // you called that verb have variable
+        public async Task<ActionResult<Product>> GetProductById(int id)
+        {
+            var product = await genericRepository.GetByIdAsync(id);
+
+            return Ok(product);
+        }
+
 
     }
 }
