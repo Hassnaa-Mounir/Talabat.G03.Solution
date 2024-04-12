@@ -34,10 +34,21 @@ namespace Talabat.APIs
             // Group of Services LifeTime Scoped
             var services =Scope.ServiceProvider;
             // you will  have service itself
-            var dbcontext =services.GetRequiredService<StoreContext>(); 
-            // you will have object from dbcontextClass by CLR Explicitly
-            await dbcontext.Database.MigrateAsync();
-             //update DataBase
+
+             // to make object from services logger factory(scopped) to helped me that catch exception
+             var LoggerFactory =services.GetRequiredService<ILoggerFactory>();
+
+            try  {
+                var dbcontext = services.GetRequiredService<StoreContext>();
+                // you will have object from dbcontextClass by CLR Explicitly
+                await dbcontext.Database.MigrateAsync();
+                //update DataBase
+            }
+            catch (Exception ex)
+            {
+                var logger = LoggerFactory.CreateLogger<Program>();
+                logger.LogError(ex ,"An Error Occured During Appling Migration"); // if you have exception it will return in console
+            }
             #endregion
 
             // Configure the HTTP request pipeline.
