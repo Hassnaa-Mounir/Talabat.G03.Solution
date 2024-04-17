@@ -4,7 +4,7 @@ using Talabat.APIs.Error;
 
 namespace Talabat.APIs.MiddleWares
 {
-    public class ExceptionMiddleware : IMiddleware
+    public class ExceptionMiddleware /*: IMiddleware*/
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
@@ -42,35 +42,57 @@ namespace Talabat.APIs.MiddleWares
         ///    }
         ///}
 
-        public async Task InvokeAsync(HttpContext httpContext , RequestDelegate _next)
+        //public async Task InvokeAsync(HttpContext httpContext , RequestDelegate _next)
+        //{
+        //    try
+        //    {
+        //        // Take An Action With the request
+
+        //        await _next.Invoke(httpContext);
+
+        //        // Take An Action With the response
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.Message); // Development
+
+        //        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        //        httpContext.Response.ContentType = "application/json";
+
+        //        var response = _env.IsDevelopment() ?
+        //            new ApiExceptionResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
+        //            :
+        //            new ApiExceptionResponse((int)HttpStatusCode.InternalServerError);
+
+        //        var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+        //        var json = JsonSerializer.Serialize(response, options);
+
+        //        await httpContext.Response.WriteAsync(json);
+
+
+        //    }
+        //}
+        public async Task InvokeAsync(HttpContext httpContext)
         {
             try
             {
                 // Take An Action With the request
-
                 await _next.Invoke(httpContext);
-
                 // Take An Action With the response
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message); // Development
-
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 httpContext.Response.ContentType = "application/json";
-
                 var response = _env.IsDevelopment() ?
-                    new ApiExceptionResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
+         new ApiExceptionResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
                     :
-                    new ApiExceptionResponse((int)HttpStatusCode.InternalServerError);
-
+         new ApiExceptionResponse((int)HttpStatusCode.InternalServerError);
                 var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
                 var json = JsonSerializer.Serialize(response, options);
-
                 await httpContext.Response.WriteAsync(json);
-
-
             }
         }
     }
