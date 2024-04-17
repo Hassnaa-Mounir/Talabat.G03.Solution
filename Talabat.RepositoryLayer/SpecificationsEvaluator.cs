@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Specifications;
 
-namespace Talabat.CoreLayer.Repositories
+namespace Talabat.RepositoryLayer
 {
     internal static class SpecificationsEvaluator<TEntity> where TEntity : BaseModel
     {
-        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec) 
+        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec)
         {
             var query = inputQuery;
 
@@ -22,11 +22,6 @@ namespace Talabat.CoreLayer.Repositories
             query = spec.Includes.Aggregate(query, (currentQuery, includeExpressiom) => currentQuery.Include(includeExpressiom));
 
             return query;
-        }
-
-        public IQueryable<T> GetQuery<T>(object value, ISpecification<T> spec) where T : BaseModel
-        {
-            throw new NotImplementedException();
         }
     }
 }

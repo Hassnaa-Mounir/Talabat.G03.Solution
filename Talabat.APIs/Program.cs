@@ -1,4 +1,7 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Talabat.APIs.Helpers;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
 using Talabat.RepositoryLayer;
@@ -32,6 +35,7 @@ namespace Talabat.APIs
             //make more generic
 
             builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             #endregion
 
@@ -86,6 +90,7 @@ namespace Talabat.APIs
 
             app.UseAuthorization();
 
+            app.UseStaticFiles();
 
             app.MapControllers(); // to find route of each controller which match middleware
 

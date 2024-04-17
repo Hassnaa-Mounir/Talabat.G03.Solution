@@ -31,6 +31,11 @@ namespace Talabat.RepositoryLayer
             return await dbcontext.Set<T>().ToListAsync();   
         }
 
+        public async Task<T> GetByIdAsync(int id)
+        {
+            //return await dbcontext.Set<T>().Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await dbcontext.Set<T>().FindAsync(id); // search localy first
+        }
         public async Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecification<T> spec)
         {
             return await ApplySpecifications(spec).ToListAsync();
@@ -43,7 +48,8 @@ namespace Talabat.RepositoryLayer
 
         private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
         {
-            return SpecificationsEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
+            return SpecificationsEvaluator<T>.GetQuery(dbcontext.Set<T>(), spec);
         }
     }
+}
 }

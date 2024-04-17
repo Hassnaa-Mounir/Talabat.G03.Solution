@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Talabat.APIs.DTOs;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
 using Talabat.CoreLayer.Specifications.ProductSpecs;
@@ -9,10 +11,12 @@ namespace Talabat.APIs.Controllers
     public class ProductsController : APIBaseController
     {
         private readonly IGenericRepository<Product> genericRepository;
+        private readonly IMapper mapper;
 
-        public ProductsController(IGenericRepository<Product> genericRepository)
+        public ProductsController(IGenericRepository<Product> genericRepository, IMapper mapper)
         {
             this.genericRepository = genericRepository;
+            this.mapper = mapper;
         }
 
         //Get All Products
@@ -27,6 +31,7 @@ namespace Talabat.APIs.Controllers
             var products = await genericRepository.GetAllWithSpecAsync(spec);
             ///OkObjectResult okObject =new OkObjectResult(products);
             ///return okObject;
+            var result = mapper.Map<IEnumerable<Product>, IEnumerable<ProductToReturnDto>>(products);
 
             //using helper method
             return Ok(products);
@@ -42,6 +47,7 @@ namespace Talabat.APIs.Controllers
             var spec = new ProductWithBrandAndCategorySpecifications(id);
             if (product is null)
                 return NotFound(new { Message = "Not Found", StatusCode = 404 }); // 404
+            var result = mapper.Map<Product, ProductToReturnDto>(product);
 
             return Ok(product);
         }
