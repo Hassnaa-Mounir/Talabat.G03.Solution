@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Talabat.APIs.Error;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.MiddleWares;
@@ -72,6 +73,7 @@ namespace Talabat.APIs
 
              // to make object from services logger factory(scopped) to helped me that catch exception
              var LoggerFactory =services.GetRequiredService<ILoggerFactory>();
+            var logger = LoggerFactory.CreateLogger<Program>();
 
             try  {
                 var dbcontext = services.GetRequiredService<StoreContext>();
@@ -88,7 +90,7 @@ namespace Talabat.APIs
             }
             catch (Exception ex)
             {
-                var logger = LoggerFactory.CreateLogger<Program>();
+               // var logger = LoggerFactory.CreateLogger<Program>();
                 logger.LogError(ex ,"An Error Occured During Appling Migration"); // if you have exception it will return in console
             }
             #endregion
@@ -100,6 +102,29 @@ namespace Talabat.APIs
             #region  Configure Middlewares - (Container will configure pipeline)
 
             app.UseMiddleware<ExceptionMiddleware>();
+
+            ///app.Use(async (httpContext, _next) =>
+            ///{
+            ///    try
+            ///    {
+            ///        // Take An Action With the request
+            ///        await _next.Invoke(httpContext);
+            ///        // Take An Action With the response
+            ///    }
+            ///    catch (Exception ex)
+            ///    {
+            ///        logger.LogError(ex.Message); // Development
+            ///        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            ///        httpContext.Response.ContentType = "application/json";
+            ///        var response = app.Environment.IsDevelopment() ?
+            ///            new ApiExceptionResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
+            ///            :
+            ///            new ApiExceptionResponse((int)HttpStatusCode.InternalServerError);
+            ///        var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            ///        var json = JsonSerializer.Serialize(response, options);
+            ///        await httpContext.Response.WriteAsync(json);
+            ///    }
+            ///});
 
             if (app.Environment.IsDevelopment())
             {
