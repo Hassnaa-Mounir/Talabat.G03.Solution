@@ -15,8 +15,9 @@ namespace Talabat.CoreLayer.Specifications
 
         public BaseSpecifications()
         {
-           
+            // Criteria = null  
         }
+
 
         public BaseSpecifications(Expression<Func<T, bool>> criteriaExpression)
         {

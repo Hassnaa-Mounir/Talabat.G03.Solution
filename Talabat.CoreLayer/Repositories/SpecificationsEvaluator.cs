@@ -10,7 +10,7 @@ namespace Talabat.CoreLayer.Repositories
 {
     internal static class SpecificationsEvaluator<TEntity> where TEntity : BaseModel
     {
-        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec)
+        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec) 
         {
             var query = inputQuery;
 

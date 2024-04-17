@@ -20,8 +20,10 @@ namespace Talabat.APIs.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
         {                                                                    // to helped frontend that consume data that must display
-            var products = await genericRepository.GetAllAsync();
+            
+            var spec = new ProductWithBrandAndCategorySpecifications();
 
+            var products = await genericRepository.GetAllWithSpecAsync(spec);
             ///OkObjectResult okObject =new OkObjectResult(products);
             ///return okObject;
 
