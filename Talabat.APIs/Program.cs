@@ -3,14 +3,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 using Talabat.APIs.Error;
 using Talabat.APIs.Extentions;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.MiddleWares;
+
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
 using Talabat.RepositoryLayer;
 using Talabat.RepositoryLayer.Data;
+using Talabat.RepositoryLayer.Identity;
 
 namespace Talabat.APIs
 {
@@ -58,7 +61,17 @@ namespace Talabat.APIs
             ///  //    });
             ///  //});
 
+            builder.Services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
+            {
+                var connection = builder.Configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(connection);
+            });
+
             builder.Services.addApplicationServices();
+            builder.Services.AddDbContext<ApplicationIdentityDbContext>(option =>
+            {
+                option.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+            });
 
             #endregion
 
@@ -73,27 +86,29 @@ namespace Talabat.APIs
             // Group of Services LifeTime Scoped
             var services =Scope.ServiceProvider;
             // you will  have service itself
-
-             // to make object from services logger factory(scopped) to helped me that catch exception
-             var LoggerFactory =services.GetRequiredService<ILoggerFactory>();
+            var _dbContext = services.GetRequiredService<StoreContext>();// ask clr for creating object from dbcontext explicitly 
+            var _IdentityDbContext = services.GetRequiredService<ApplicationIdentityDbContext>();// ask clr for creating object from dbcontext explicitly 
+           
+            // to make object from services logger factory(scopped) to helped me that catch exception
+            var LoggerFactory =services.GetRequiredService<ILoggerFactory>();
             var logger = LoggerFactory.CreateLogger<Program>();
 
             try  {
-                var dbcontext = services.GetRequiredService<StoreContext>();
-                // you will have object from dbcontextClass by CLR Explicitly
-                await dbcontext.Database.MigrateAsync();
-                //update DataBase
+                await _dbContext.Database.MigrateAsync();// update database 
+                await StoreContextDataSeed.SeedAsync(_dbContext);
+                await _IdentityDbContext.Database.MigrateAsync(); // update database
 
                 #region DataSeeding
 
-               await StoreContextDataSeed.SeedAsync(dbcontext);
+                await StoreContextDataSeed.SeedAsync(_dbContext);
 
                 #endregion
 
             }
             catch (Exception ex)
             {
-               // var logger = LoggerFactory.CreateLogger<Program>();
+                Console.WriteLine(ex);
+                // var logger = LoggerFactory.CreateLogger<Program>();
                 logger.LogError(ex ,"An Error Occured During Appling Migration"); // if you have exception it will return in console
             }
             #endregion
