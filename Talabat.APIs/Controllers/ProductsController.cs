@@ -6,20 +6,29 @@ using Talabat.APIs.Error;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
 using Talabat.CoreLayer.Specifications.ProductSpecs;
+using Talabat.RepositoryLayer;
 
 namespace Talabat.APIs.Controllers
 {
     public class ProductsController : APIBaseController
     {
-        private readonly IGenericRepository<Product> genericRepository;
+        private readonly IGenericRepository<Product> productsRepo;
         private readonly IMapper mapper;
+        private readonly IGenericRepository<ProductBrand> brandsRepo;
+        private readonly IGenericRepository<ProductType> categoriesRepo;
 
-        public ProductsController(IGenericRepository<Product> genericRepository, IMapper mapper)
+        public ProductsController(
+             IGenericRepository<Product> productsRepo,
+             IMapper mapper,
+             IGenericRepository<ProductBrand> brandsRepo,
+             IGenericRepository<ProductType> categoriesRepo
+             )
         {
-            this.genericRepository = genericRepository;
+            this.productsRepo = productsRepo;
             this.mapper = mapper;
+            this.brandsRepo = brandsRepo;
+            this.categoriesRepo = categoriesRepo;
         }
-
         //Get All Products
 
         //BaseURL/api/controller ----- determine verb method
@@ -29,7 +38,7 @@ namespace Talabat.APIs.Controllers
             
             var spec = new ProductWithBrandAndCategorySpecifications();
 
-            var products = await genericRepository.GetAllWithSpecAsync(spec);
+            var products = await productsRepo.GetAllWithSpecAsync(spec);
             ///OkObjectResult okObject =new OkObjectResult(products);
             ///return okObject;
             var result = mapper.Map<IEnumerable<Product>, IEnumerable<ProductToReturnDto>>(products);
@@ -46,7 +55,7 @@ namespace Talabat.APIs.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var product = await genericRepository.GetByIdAsync(id);
+            var product = await productsRepo.GetByIdAsync(id);
             var spec = new ProductWithBrandAndCategorySpecifications(id);
             if (product is null)
                 return NotFound(/*new { Message = "Not Found", StatusCode = 404 }*/new ApiResponse(404)); // 404
@@ -54,6 +63,19 @@ namespace Talabat.APIs.Controllers
 
             return Ok(result);
         }
-   
-}
+
+        [HttpGet("brands")]
+        public async Task<ActionResult<IEnumerable<ProductBrand>>> GetBrands()
+        {
+            var brands = await brandsRepo.GetAllAsync();
+            return Ok(brands);
+        }
+
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<ProductType>>> GetCategories()
+        {
+            var categories = await categoriesRepo.GetAllAsync();
+            return Ok(categories);
+        }
+    }
 }
