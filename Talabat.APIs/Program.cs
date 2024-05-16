@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,10 +11,13 @@ using Talabat.APIs.Helpers;
 using Talabat.APIs.MiddleWares;
 
 using Talabat.CoreLayer.Entities;
+using Talabat.CoreLayer.Entities.Idintity;
 using Talabat.CoreLayer.Repositories;
+using Talabat.CoreLayer.Services;
 using Talabat.RepositoryLayer;
 using Talabat.RepositoryLayer.Data;
 using Talabat.RepositoryLayer.Identity;
+using Talabat.ServicesLayer.AuthService;
 
 namespace Talabat.APIs
 {
@@ -27,9 +31,12 @@ namespace Talabat.APIs
 
             #region Configure Services - Create kestral 
 
-            builder.Services.AddControllers(); //add services of api
-                                               // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
+            // builder.Services.AddControllers(); //add services of api
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+           builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
             /// builder.Services.AddEndpointsApiExplorer(); // to configure document of open api (swagger)
             /// builder.Services.AddSwaggerGen();  // to configure document of open api (swagger)
             builder.Services.AddSwaggerServices();
@@ -72,7 +79,12 @@ namespace Talabat.APIs
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
             });
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+            }).AddEntityFrameworkStores<ApplicationIdentityDbContext>();
 
+          // builder.Services.AddScoped(typeof(IAuthService), typeof(AuthService));
+          builder.Services.AddAuthServices(builder.Configuration);
             #endregion
 
             var app = builder.Build();
@@ -97,7 +109,8 @@ namespace Talabat.APIs
                 await _dbContext.Database.MigrateAsync();// update database 
                 await StoreContextDataSeed.SeedAsync(_dbContext);
                 await _IdentityDbContext.Database.MigrateAsync(); // update database
-
+                var _userManger = services.GetRequiredService<UserManager<ApplicationUser>>();
+                await ApplicationIdentityContextSeed.SeedUserAsync(_userManger);
                 #region DataSeeding
 
                 await StoreContextDataSeed.SeedAsync(_dbContext);
