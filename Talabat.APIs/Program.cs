@@ -80,8 +80,8 @@ namespace Talabat.APIs
             {
             }).AddEntityFrameworkStores<ApplicationIdentityDbContext>();
 
-           builder.Services.AddScoped(typeof(IAuthService), typeof(AuthService));
-
+          // builder.Services.AddScoped(typeof(IAuthService), typeof(AuthService));
+          builder.Services.AddAuthServices(builder.Configuration);
             #endregion
 
             var app = builder.Build();
