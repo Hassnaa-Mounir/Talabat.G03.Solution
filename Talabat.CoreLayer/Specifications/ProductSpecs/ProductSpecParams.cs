@@ -10,7 +10,13 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
     {
         private const int MaxPageSize = 10;
         private int pageSize = 5;
+        private string? search;
 
+        public string? Search
+        {
+            get { return search; }
+            set { search = value?.ToLower(); }
+        }
         public int PageSize
         {
             get { return pageSize; }
@@ -23,4 +29,4 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
         public int? CategoryId { get; set; }
     }
 }
-}
+
