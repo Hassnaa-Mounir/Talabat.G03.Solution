@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Talabat.APIs.DTOs;
 using Talabat.APIs.Error;
+using Talabat.APIs.Extentions;
 using Talabat.CoreLayer.Entities.Idintity;
 using Talabat.CoreLayer.Services;
 
@@ -87,6 +88,22 @@ namespace Talabat.APIs.Controllers
             var user = await userManager.FindUserWithAddressAsync(User);
 
             return Ok(mapper.Map<AddressDto>(user.Adress));
+        }
+        [Authorize]
+        [HttpPut("address")] // GET /api/Account/address
+        public async Task<ActionResult<Address>> UpdateUserAddress(AddressDto address)
+        {
+            var updatedAddress = mapper.Map<Address>(address);
+            var user = await userManager.FindUserWithAddressAsync(User);
+
+            updatedAddress.Id = user.Adress.Id;
+
+            user.Adress = updatedAddress;
+
+            var result = await userManager.UpdateAsync(user);
+            if (!result.Succeeded) return BadRequest(new ApiValidationErrorResponse() { Errors = result.Errors.Select(e => e.Description) });
+
+            return Ok(address);
         }
     }
 }
