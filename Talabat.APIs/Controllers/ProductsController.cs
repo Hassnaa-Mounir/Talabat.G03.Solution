@@ -33,10 +33,10 @@ namespace Talabat.APIs.Controllers
 
         //BaseURL/api/controller ----- determine verb method
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts(string sort, int? brandId, int? categoryId)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
         {                                                                    // to helped frontend that consume data that must display
             
-            var spec = new ProductWithBrandAndCategorySpecifications(sort, brandId, categoryId);
+            var spec = new ProductWithBrandAndCategorySpecifications(specParams);
 
             var products = await productsRepo.GetAllWithSpecAsync(spec);
             ///OkObjectResult okObject =new OkObjectResult(products);

@@ -13,17 +13,17 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
         //{
         //    AddInclude();
         //}
-        public ProductWithBrandAndCategorySpecifications(string sort , int? brandId, int? categoryId)
+        public ProductWithBrandAndCategorySpecifications(ProductSpecParams specParams)
             : base(p =>
 
-                 (!brandId.HasValue || p.ProductBrandId == brandId.Value) &&
-                 (!categoryId.HasValue || p.ProductTypeId == categoryId.Value)
+                (!specParams.BrandId.HasValue || p.ProductBrandId == specParams.BrandId.Value) &&
+                 (!specParams.CategoryId.HasValue || p.ProductTypeId == specParams.CategoryId.Value)
             ) 
         {
             AddInclude();
-            if (!string.IsNullOrEmpty(sort))
+            if (!string.IsNullOrEmpty(specParams.Sort))
             {
-                switch (sort)
+                switch (specParams.Sort)
                 {
                     case "priceAsc":
                         //OrderBy = p => p.Price;
@@ -38,6 +38,7 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
                 }
             }
             else AddOrderBy(p => p.Name);
+            ApplyPagination((specParams.PageIndex - 1) * specParams.PageSize, specParams.PageSize);
         }
 
         public ProductWithBrandAndCategorySpecifications(int id) : base(P => P.Id == id)
