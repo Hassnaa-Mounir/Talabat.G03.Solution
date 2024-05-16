@@ -50,6 +50,11 @@ namespace Talabat.RepositoryLayer
         {
             return SpecificationsEvaluator<T>.GetQuery(dbcontext.Set<T>(), spec);
         }
+        public Task<int> GetCountAsync(ISpecification<T> spec)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
 

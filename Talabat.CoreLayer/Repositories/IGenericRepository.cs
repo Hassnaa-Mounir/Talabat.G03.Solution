@@ -17,6 +17,6 @@ namespace Talabat.CoreLayer.Repositories
        Task<T> GetByIdAsync(int id);
         Task<T?> GetWithSpecAsync(ISpecification<T> spec);
         Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec);
-
+        Task<int> GetCountAsync(ISpecification<T> spec);
     }
 }

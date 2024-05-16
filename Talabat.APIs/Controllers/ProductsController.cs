@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Talabat.APIs.DTOs;
 using Talabat.APIs.Error;
+using Talabat.APIs.Helpers;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
 using Talabat.CoreLayer.Specifications.ProductSpecs;
@@ -33,7 +34,7 @@ namespace Talabat.APIs.Controllers
 
         //BaseURL/api/controller ----- determine verb method
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
         {                                                                    // to helped frontend that consume data that must display
             
             var spec = new ProductWithBrandAndCategorySpecifications(specParams);
@@ -44,7 +45,13 @@ namespace Talabat.APIs.Controllers
             var result = mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>((IReadOnlyList<Product>)products);
 
             //using helper method
-            return Ok(result);
+            var data = mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
+            var countSpec = new ProductWithFilterationForCountSpecification(specParams);
+
+            var count = await productsRepo.GetCountAsync(countSpec);
+
+            return Ok(new Pagination<ProductToReturnDto>(specParams.PageIndex, specParams.PageSize, count, data));
 
         }
 
