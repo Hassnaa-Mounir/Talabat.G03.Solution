@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using Talabat.APIs.Helpers;
 using Talabat.APIs.MiddleWares;
 
 using Talabat.CoreLayer.Entities;
+using Talabat.CoreLayer.Entities.Idintity;
 using Talabat.CoreLayer.Repositories;
 using Talabat.RepositoryLayer;
 using Talabat.RepositoryLayer.Data;
@@ -72,7 +74,9 @@ namespace Talabat.APIs
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
             });
-
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+            }).AddEntityFrameworkStores<ApplicationIdentityDbContext>();
             #endregion
 
             var app = builder.Build();
@@ -97,7 +101,8 @@ namespace Talabat.APIs
                 await _dbContext.Database.MigrateAsync();// update database 
                 await StoreContextDataSeed.SeedAsync(_dbContext);
                 await _IdentityDbContext.Database.MigrateAsync(); // update database
-
+                var _userManger = services.GetRequiredService<UserManager<ApplicationUser>>();
+                await ApplicationIdentityContextSeed.SeedUserAsync(_userManger);
                 #region DataSeeding
 
                 await StoreContextDataSeed.SeedAsync(_dbContext);
