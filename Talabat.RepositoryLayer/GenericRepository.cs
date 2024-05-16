@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
+using Talabat.CoreLayer.Specifications;
 using Talabat.RepositoryLayer.Data;
 
 namespace Talabat.RepositoryLayer
@@ -35,5 +36,20 @@ namespace Talabat.RepositoryLayer
             //return await dbcontext.Set<T>().Where(x => x.Id == id).FirstOrDefaultAsync();
             return await dbcontext.Set<T>().FindAsync(id); // search localy first
         }
+        public async Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecifications(spec).ToListAsync();
+        }
+
+        public async Task<T?> GetWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecifications(spec).FirstOrDefaultAsync();
+        }
+
+        private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
+        {
+            return SpecificationsEvaluator<T>.GetQuery(dbcontext.Set<T>(), spec);
+        }
     }
+}
 }
