@@ -31,9 +31,12 @@ namespace Talabat.APIs
 
             #region Configure Services - Create kestral 
 
-            builder.Services.AddControllers(); //add services of api
-                                               // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
+            // builder.Services.AddControllers(); //add services of api
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+           builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
             /// builder.Services.AddEndpointsApiExplorer(); // to configure document of open api (swagger)
             /// builder.Services.AddSwaggerGen();  // to configure document of open api (swagger)
             builder.Services.AddSwaggerServices();
