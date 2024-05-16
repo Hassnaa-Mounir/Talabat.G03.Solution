@@ -9,11 +9,18 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
 {
     public class ProductWithBrandAndCategorySpecifications : BaseSpecifications<Product>
     {
-        public ProductWithBrandAndCategorySpecifications() : base()
+        //public ProductWithBrandAndCategorySpecifications() : base()
+        //{
+        //    AddInclude();
+        //}
+        public ProductWithBrandAndCategorySpecifications(string sort)
         {
             AddInclude();
-        }
+            if (!string.IsNullOrEmpty(sort))
+            {
 
+            }
+        }
 
         public ProductWithBrandAndCategorySpecifications(int id) : base(P => P.Id == id)
         {
