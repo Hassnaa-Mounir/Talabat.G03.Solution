@@ -13,7 +13,12 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
         //{
         //    AddInclude();
         //}
-        public ProductWithBrandAndCategorySpecifications(string sort) :base()
+        public ProductWithBrandAndCategorySpecifications(string sort , int? brandId, int? categoryId)
+            : base(p =>
+
+                 (!brandId.HasValue || p.ProductBrandId == brandId.Value) &&
+                 (!categoryId.HasValue || p.ProductTypeId == categoryId.Value)
+            ) 
         {
             AddInclude();
             if (!string.IsNullOrEmpty(sort))

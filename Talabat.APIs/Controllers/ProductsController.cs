@@ -36,7 +36,7 @@ namespace Talabat.APIs.Controllers
         public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts(string sort, int? brandId, int? categoryId)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
         {                                                                    // to helped frontend that consume data that must display
             
-            var spec = new ProductWithBrandAndCategorySpecifications(sort);
+            var spec = new ProductWithBrandAndCategorySpecifications(sort, brandId, categoryId);
 
             var products = await productsRepo.GetAllWithSpecAsync(spec);
             ///OkObjectResult okObject =new OkObjectResult(products);
