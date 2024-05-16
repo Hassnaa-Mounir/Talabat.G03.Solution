@@ -13,9 +13,11 @@ using Talabat.APIs.MiddleWares;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Entities.Idintity;
 using Talabat.CoreLayer.Repositories;
+using Talabat.CoreLayer.Services;
 using Talabat.RepositoryLayer;
 using Talabat.RepositoryLayer.Data;
 using Talabat.RepositoryLayer.Identity;
+using Talabat.ServicesLayer.AuthService;
 
 namespace Talabat.APIs
 {
@@ -77,6 +79,9 @@ namespace Talabat.APIs
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
             }).AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+
+           builder.Services.AddScoped(typeof(IAuthService), typeof(AuthService));
+
             #endregion
 
             var app = builder.Build();
