@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Talabat.APIs.DTOs;
 using Talabat.APIs.Error;
+using Talabat.APIs.Helpers;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
 using Talabat.CoreLayer.Specifications.ProductSpecs;
@@ -33,18 +34,24 @@ namespace Talabat.APIs.Controllers
 
         //BaseURL/api/controller ----- determine verb method
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response
         {                                                                    // to helped frontend that consume data that must display
             
-            var spec = new ProductWithBrandAndCategorySpecifications();
+            var spec = new ProductWithBrandAndCategorySpecifications(specParams);
 
             var products = await productsRepo.GetAllWithSpecAsync(spec);
             ///OkObjectResult okObject =new OkObjectResult(products);
             ///return okObject;
-            var result = mapper.Map<IEnumerable<Product>, IEnumerable<ProductToReturnDto>>(products);
+            var result = mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>((IReadOnlyList<Product>)products);
 
             //using helper method
-            return Ok(result);
+            var data = mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
+            var countSpec = new ProductWithFilterationForCountSpecification(specParams);
+
+            var count = await productsRepo.GetCountAsync(countSpec);
+
+            return Ok(new Pagination<ProductToReturnDto>(specParams.PageIndex, specParams.PageSize, count, data));
 
         }
 
@@ -65,14 +72,14 @@ namespace Talabat.APIs.Controllers
         }
 
         [HttpGet("brands")]
-        public async Task<ActionResult<IEnumerable<ProductBrand>>> GetBrands()
+        public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetBrands()
         {
             var brands = await brandsRepo.GetAllAsync();
             return Ok(brands);
         }
 
         [HttpGet("categories")]
-        public async Task<ActionResult<IEnumerable<ProductType>>> GetCategories()
+        public async Task<ActionResult<IReadOnlyList<ProductType>>> GetCategories()
         {
             var categories = await categoriesRepo.GetAllAsync();
             return Ok(categories);

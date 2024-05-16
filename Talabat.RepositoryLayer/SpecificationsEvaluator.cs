@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,16 @@ namespace Talabat.RepositoryLayer
                 query = query.Where(spec.Criteria);
             }
 
-            query = spec.Includes.Aggregate(query, (currentQuery, includeExpressiom) => currentQuery.Include(includeExpressiom));
+            if (spec.OrderBy is not null) // p => p.name 
+                query = query.OrderBy(spec.OrderBy);
+
+            else if (spec.OrderByDesc is not null)
+                query = query.OrderByDescending(spec.OrderByDesc);
+            if (spec.IsPaginationEnabled)
+                query = query.Take(spec.Take).Skip(spec.Skip);
+
+            query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
+
 
             return query;
         }

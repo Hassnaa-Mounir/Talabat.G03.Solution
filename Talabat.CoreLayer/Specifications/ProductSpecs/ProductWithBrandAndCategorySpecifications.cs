@@ -9,11 +9,37 @@ namespace Talabat.CoreLayer.Specifications.ProductSpecs
 {
     public class ProductWithBrandAndCategorySpecifications : BaseSpecifications<Product>
     {
-        public ProductWithBrandAndCategorySpecifications() : base()
+        //public ProductWithBrandAndCategorySpecifications() : base()
+        //{
+        //    AddInclude();
+        //}
+        public ProductWithBrandAndCategorySpecifications(ProductSpecParams specParams)
+            : base(p =>
+                 (string.IsNullOrEmpty(specParams.Search) || p.Name.ToLower().Contains(specParams.Search)) &&
+                (!specParams.BrandId.HasValue || p.ProductBrandId == specParams.BrandId.Value) &&
+                 (!specParams.CategoryId.HasValue || p.ProductTypeId == specParams.CategoryId.Value)
+            ) 
         {
             AddInclude();
+            if (!string.IsNullOrEmpty(specParams.Sort))
+            {
+                switch (specParams.Sort)
+                {
+                    case "priceAsc":
+                        //OrderBy = p => p.Price;
+                        AddOrderBy(p => p.Price);
+                        break;
+                    case "priceDesc":
+                        AddOrderByDesc(p => p.Price);
+                        break;
+                    default:
+                        AddOrderBy(p => p.Name);
+                        break;
+                }
+            }
+            else AddOrderBy(p => p.Name);
+            ApplyPagination((specParams.PageIndex - 1) * specParams.PageSize, specParams.PageSize);
         }
-
 
         public ProductWithBrandAndCategorySpecifications(int id) : base(P => P.Id == id)
         {
