@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,8 +10,11 @@ namespace Talabat.CoreLayer.Entities.Order_Aggregate
     public enum OrderStatus
     {
         //[EnumMember]
+        [EnumMember(Value = "Pending")]
         Pending,
+        [EnumMember(Value = "PaymentReceived")]
         PaymentReceived,
+        [EnumMember(Value = "PaymentFailed")]
         PaymentFailed
     }
 }

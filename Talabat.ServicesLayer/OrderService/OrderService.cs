@@ -59,7 +59,7 @@ namespace Talabat.ServicesLayer.OrderService
             // 4. Get Delivery Method From DeliveryMethods Repo
 
             //var deliveryMethod = await deliveryMethodRepo.GetAsync(deliveryMethodId);
-            var deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetAsync(deliveryMethodId);
+            var deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryMethodId);
 
             // 5. Create Order 
 
@@ -82,9 +82,14 @@ namespace Talabat.ServicesLayer.OrderService
             throw new NotImplementedException();
         }
 
-        public Task<Order> GetOrderByIdForUserAsync(string buyerEmail, int orderId)
+        public Task<Order> GetOrderByIdForUserAsync(int orderId, string buyerEmail)
         {
-            throw new NotImplementedException();
+            var orderRepo = unitOfWork.Repository<Order>();
+
+            var orderSpec = new OrderSpecifications(orderId, buyerEmail);
+
+            var order = orderRepo.GetWithSpecAsync(orderSpec);
+            return order;
         }
         public async Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
         {
