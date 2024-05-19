@@ -12,11 +12,11 @@ namespace Talabat.CoreLayer.Entities.Order_Aggregate
         {
 
         }
-        public Order(string buyerEmail, Address shippingAddress, int deliveryMethodId, ICollection<OrderItem> items, decimal subtotal)
+        public Order(string buyerEmail, Address shippingAddress, DeliveryMethod deliveryMethod, ICollection<OrderItem> items, decimal subtotal)
         {
             BuyerEmail = buyerEmail;
             ShippingAddress = shippingAddress;
-            DeliveryMethod.Id = deliveryMethodId;
+            DeliveryMethod= deliveryMethod;
             Items = items;
             Subtotal = subtotal;
         }
