@@ -9,6 +9,7 @@ using Talabat.CoreLayer.Repositories;
 using Talabat.CoreLayer.Services;
 using Talabat.RepositoryLayer;
 using Talabat.ServicesLayer.AuthService;
+using Talabat.ServicesLayer.OrderService;
 
 namespace Talabat.APIs.Extentions
 {
@@ -17,6 +18,7 @@ namespace Talabat.APIs.Extentions
         public static IServiceCollection addApplicationServices(this IServiceCollection services)
         {
             //services.AddScoped<IBasketRepository, BasketRepository>(); old way 
+            services.AddScoped(typeof(IOrderService), typeof(OrderService));
             services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));// new way with type of 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
