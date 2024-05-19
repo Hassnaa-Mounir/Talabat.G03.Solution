@@ -8,6 +8,18 @@ namespace Talabat.CoreLayer.Entities.Order_Aggregate
 {
     public class Order : BaseModel
     {
+        private Order()
+        {
+
+        }
+        public Order(string buyerEmail, Address shippingAddress, int deliveryMethodId, ICollection<OrderItem> items, decimal subtotal)
+        {
+            BuyerEmail = buyerEmail;
+            ShippingAddress = shippingAddress;
+            DeliveryMethod.Id = deliveryMethodId;
+            Items = items;
+            Subtotal = subtotal;
+        }
         public string BuyerEmail { get; set; }
 
         public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.UtcNow;
@@ -32,5 +44,6 @@ namespace Talabat.CoreLayer.Entities.Order_Aggregate
 
         public string PaymentIntentId { get; set; } = string.Empty;
 
+       
     }
 }
