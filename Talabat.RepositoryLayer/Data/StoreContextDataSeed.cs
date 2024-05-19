@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Talabat.CoreLayer.Entities;
+using Talabat.CoreLayer.Entities.Order_Aggregate;
 
 namespace Talabat.RepositoryLayer.Data
 {
@@ -76,7 +78,21 @@ namespace Talabat.RepositoryLayer.Data
                 #endregion
             }
 
-            
+            if (!dbcontext.DeliveryMethods.Any())
+            {
+                var deliveryMethodsData = File.ReadAllText("../Talabat.Infrastructure/Data/Dataseed/delivery.json");
+
+                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryMethodsData);
+
+                if (deliveryMethods?.Count > 0)
+                {
+                    foreach (var deliveryMethod in deliveryMethods)
+                    {
+                        dbcontext.Set<DeliveryMethod>().Add(deliveryMethod);
+                    }
+                    await dbcontext.SaveChangesAsync();
+                }
+            }
 
 
         }
