@@ -7,6 +7,7 @@ using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Entities.Order_Aggregate;
 using Talabat.CoreLayer.Repositories;
 using Talabat.CoreLayer.Services;
+using Talabat.CoreLayer.Specifications.OrderSpec;
 
 namespace Talabat.ServicesLayer.OrderService
 {
@@ -58,14 +59,14 @@ namespace Talabat.ServicesLayer.OrderService
             // 4. Get Delivery Method From DeliveryMethods Repo
 
             //var deliveryMethod = await deliveryMethodRepo.GetAsync(deliveryMethodId);
-
+            var deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetAsync(deliveryMethodId);
 
             // 5. Create Order 
 
             var order = new Order(
                 buyerEmail: buyerEmail,
                 shippingAddress: shippingAddress,
-                deliveryMethodId: deliveryMethodId,
+               deliveryMethod: deliveryMethod,
                 items: orderItems,
                 subtotal: subtotal
                 );
@@ -85,10 +86,15 @@ namespace Talabat.ServicesLayer.OrderService
         {
             throw new NotImplementedException();
         }
-
-        public Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
+        public async Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
         {
-            throw new NotImplementedException();
+            var orderRepo = unitOfWork.Repository<Order>();
+
+            var spec = new OrderSpecifications(buyerEmail);
+
+            var orders = await orderRepo.GetAllWithSpecAsync(spec);
+
+            return orders;
         }
     }
 }
