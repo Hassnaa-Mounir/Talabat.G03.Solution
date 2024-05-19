@@ -30,7 +30,7 @@ namespace Talabat.RepositoryLayer
 
             return await dbcontext.Set<T>().ToListAsync();   
         }
-
+        
         public async Task<T> GetByIdAsync(int id)
         {
             //return await dbcontext.Set<T>().Where(x => x.Id == id).FirstOrDefaultAsync();
