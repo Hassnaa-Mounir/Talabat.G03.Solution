@@ -54,7 +54,14 @@ namespace Talabat.RepositoryLayer
         {
             return await ApplySpecifications(spec).CountAsync();
         }
+        public void Add(T entity)
+        => dbcontext.Set<T>().Add(entity);
 
+        public void Delete(T entity)
+        => dbcontext.Set<T>().Remove(entity);
+
+        public void Update(T entity)
+        => dbcontext.Set<T>().Update(entity);
     }
 }
 
