@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\DataSeeding\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Talabat.CoreLayer\Talabat.CoreLayer.csproj" />
   </ItemGroup>
 

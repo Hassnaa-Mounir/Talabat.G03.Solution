@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Talabat.CoreLayer.Entities;
+using Talabat.CoreLayer.Entities.Order_Aggregate;
 
 namespace Talabat.RepositoryLayer.Data
 {
@@ -27,5 +28,8 @@ namespace Talabat.RepositoryLayer.Data
         public DbSet<ProductBrand> ProductBrand { get; set; } = null!;
 
         public DbSet<ProductType> ProductType { get; set; } = null!;
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
     }
 }
