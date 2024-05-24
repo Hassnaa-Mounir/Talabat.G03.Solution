@@ -41,6 +41,13 @@ namespace Talabat.APIs
             /// builder.Services.AddSwaggerGen();  // to configure document of open api (swagger)
             builder.Services.AddSwaggerServices();
             builder.Services.AddDbContext<StoreContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddCors(option =>
+            {
+                option.AddPolicy("MyPolicy", policyOptions =>
+                {
+                    policyOptions.AllowAnyHeader().AllowAnyMethod().WithOrigins(builder.Configuration["FrontBaseUrl"]);
+                });
+            });
             // add dependency injection for dbcontext class and life time scoped
 
             //builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
@@ -170,6 +177,8 @@ namespace Talabat.APIs
             app.UseAuthorization();
 
             app.UseStaticFiles();
+            app.UseCors("MyPolicy");
+
 
             app.MapControllers(); // to find route of each controller which match middleware
 
