@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Talabat.APIs.Error;
+using Talabat.CoreLayer.Entities;
+using Talabat.CoreLayer.Services;
 
 namespace Talabat.APIs.Controllers
 {
