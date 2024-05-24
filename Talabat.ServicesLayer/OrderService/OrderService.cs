@@ -15,18 +15,23 @@ namespace Talabat.ServicesLayer.OrderService
     {
         private readonly IBasketRepository basketRepo;
         private readonly IGenericRepository<Product> productRepo;
+        private readonly IPaymentService paymentService;
+        IUnitOfWork unitOfWork,
         private readonly IGenericRepository<DeliveryMethod> deliveryMethodRepo;
         private readonly IGenericRepository<Order> orderRepo;
 
         public OrderService(IBasketRepository basketRepo,
-            IGenericRepository<Product> productRepo,
-            IGenericRepository<DeliveryMethod> deliveryMethodRepo,
-            IGenericRepository<Order> orderRepo)
+           // IGenericRepository<Product> productRepo,
+            IPaymentService paymentService
+            //IGenericRepository<DeliveryMethod> deliveryMethodRepo,
+            /*IGenericRepository<Order> orderRepo*/)
         {
             this.basketRepo = basketRepo;
-            this.productRepo = productRepo;
-            this.deliveryMethodRepo = deliveryMethodRepo;
-            this.orderRepo = orderRepo;
+           // this.productRepo = productRepo;
+           // this.deliveryMethodRepo = deliveryMethodRepo;
+            //this.orderRepo = orderRepo;
+            this.unitOfWork = unitOfWork;
+            this.paymentService = paymentService;
         }
         public async Task<Order> CreateOrderAsync(string buyerEmail, string basketId, int deliveryMethodId, Address shippingAddress)
         {
@@ -60,6 +65,17 @@ namespace Talabat.ServicesLayer.OrderService
 
             //var deliveryMethod = await deliveryMethodRepo.GetAsync(deliveryMethodId);
             var deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryMethodId);
+            var orderRepo = unitOfWork.Repository<Order>();
+
+            var spec = new OrderWithPaymentIntentSpecification(basket?.PaymentIntentId);
+
+            var existingOrder = await orderRepo.GetWithSpecAsync(spec);
+
+            if (existingOrder != null)
+            {
+                orderRepo.Delete(existingOrder);
+                await paymentService.CreateOrUpdatePaymentIntent(basketId);
+            }
 
             // 5. Create Order 
 
@@ -68,11 +84,12 @@ namespace Talabat.ServicesLayer.OrderService
                 shippingAddress: shippingAddress,
                deliveryMethod: deliveryMethod,
                 items: orderItems,
-                subtotal: subtotal
+                subtotal: subtotal,
+                paymentIntentId: basket?.PaymentIntentId ?? ""
                 );
 
+            // orderRepo.Add(order);
             orderRepo.Add(order);
-
             // 6. Save To Database [TODO]
 
             return order;
