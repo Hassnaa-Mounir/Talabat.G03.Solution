@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Talabat.CoreLayer.Entities.Order_Aggregate;
 using Talabat.CoreLayer.Entities;
 using Talabat.CoreLayer.Repositories;
+using Talabat.CoreLayer.Services;
+using Stripe;
+using Talabat.CoreLayer.Specifications.OrderSpec;
 
 namespace Talabat.ServicesLayer.PaymentService
 {
@@ -86,6 +89,28 @@ namespace Talabat.ServicesLayer.PaymentService
             return basket;
 
 
+        }
+
+        public async Task<Order?> UpdateOrderStatus(string paymentIntentId, bool isPaid)
+        {
+            var orderRepo = unitOfWork.Repository<Order>();
+
+            var spec = new OrderWithPaymentIntentSpecification(paymentIntentId);
+
+            var order = await orderRepo.GetWithSpecAsync(spec);
+
+            if (order == null) return null;
+
+            if (isPaid)
+                order.Status = OrderStatus.PaymentReceived;
+            else
+                order.Status = OrderStatus.PaymentFailed;
+
+            orderRepo.Update(order);
+
+            await unitOfWork.CompleteAsync();
+
+            return order;
         }
     }
 }
