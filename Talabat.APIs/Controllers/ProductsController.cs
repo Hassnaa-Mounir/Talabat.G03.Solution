@@ -38,6 +38,7 @@ namespace Talabat.APIs.Controllers
         //Get All Products
 
         //BaseURL/api/controller ----- determine verb method
+       // [CachedAttribute(600)]
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)  //ActionResult<IEnumerable<Product>> specific for frontend shaped of response

@@ -10,7 +10,9 @@ using Talabat.CoreLayer.Services;
 using Talabat.RepositoryLayer;
 using Talabat.ServicesLayer;
 using Talabat.ServicesLayer.AuthService;
+using Talabat.ServicesLayer.CacheService;
 using Talabat.ServicesLayer.OrderService;
+using Talabat.ServicesLayer.PaymentService;
 
 namespace Talabat.APIs.Extentions
 {
@@ -18,6 +20,7 @@ namespace Talabat.APIs.Extentions
     {
         public static IServiceCollection addApplicationServices(this IServiceCollection services)
         {
+            services.AddSingleton(typeof(IResponseCacheService), typeof(ResponseCacheService));
             services.AddScoped(typeof(IPaymentService), typeof(PaymentService));
             services.AddScoped(typeof(IproductService), typeof(ProductService));
             //services.AddScoped<IBasketRepository, BasketRepository>(); old way 
